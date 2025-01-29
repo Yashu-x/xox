@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 
@@ -43,16 +43,16 @@ const Page = () => {
         setSuccessMessage("Challenge sent successfully!");
         setEmail("");
       }
-    } catch (error: any) {
-      if (error.response) {
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
         // API errors with response
-        const { status, data } = error.response;
+        const { status, data } = error.response || {};
         if (status === 404) {
-          setError(data.error || "Player not found.");
+          setError(data?.error || "Player not found.");
         } else if (status === 400) {
-          setError(data.error || "Challenge already sent or invalid data.");
+          setError(data?.error || "Challenge already sent or invalid data.");
         } else {
-          setError(data.error || "Failed to send challenge. Please try again.");
+          setError(data?.error || "Failed to send challenge. Please try again.");
         }
       } else if (error instanceof z.ZodError) {
         // Validation errors

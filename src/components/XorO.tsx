@@ -3,13 +3,13 @@ import React from "react";
 import { motion, Variants } from "framer-motion";
 
 interface XorOProps {
-  value?: String;
+  value?: string;
 }
 
 const XorO: React.FC<XorOProps> = ({ value}) => {
   const draw: Variants = {
     hidden: { pathLength: 0, opacity: 0 },
-    visible: (i) => ({
+    visible: () => ({
       pathLength: 1,
       opacity: 1,
       transition: {

@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 import axios from "axios";
@@ -33,6 +31,7 @@ const page = async () => {
     );
   } catch (error) {
     console.error("Failed to fetch points:");
+    console.log(error);
     notFound(); // Handle errors gracefully
   }
 };

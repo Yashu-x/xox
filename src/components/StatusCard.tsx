@@ -3,7 +3,7 @@ import { Card, CardContent, CardTitle } from "./ui/card";
 import XorO from "./XorO";
 
 interface StatusCardProps {
-  status: String;
+  status: string;
 }
 
 const StatusCard: FC<StatusCardProps> = ({ status }) => {

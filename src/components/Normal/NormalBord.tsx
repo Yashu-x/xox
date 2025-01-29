@@ -10,7 +10,7 @@ interface NormalBordProps {
   gameid: string;
   players: {id: string, name: string,email:string}[];
   moves:string[];
-  lastmoveId:String;
+  lastmoveId:string;
   islastX:boolean;
 }
 
@@ -38,7 +38,7 @@ const isBoardFull = (squares: string[]): boolean => {
   return squares.every(square => square !== "");
 };
 
-export const NormalBord: FC<NormalBordProps> = ({gameid,moves,lastmoveId,players,islastX}) => {
+export const NormalBord: FC<NormalBordProps> = ({moves,lastmoveId,players,islastX}) => {
   const [xIsNext, setXIsNext] = useState<boolean>(islastX);
   const [squares, setSquares] = useState<string[]>(moves);
   const { data: session } = useSession();

@@ -23,6 +23,7 @@ const Page = async () => {
     points = response.data.points || 0;
   } catch (error) {
     console.error("Error fetching points:");
+    console.error(error);
   }
 
   return (

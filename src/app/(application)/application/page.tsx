@@ -39,7 +39,8 @@ const page = async () => {
     )
   } catch (error) {
     console.error("Failed to fetch points:");
-    notFound(); // Handle errors gracefully
+    console.log(error);
+    notFound(); 
   }
 }
 
