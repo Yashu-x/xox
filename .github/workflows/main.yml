@@ -23,13 +23,16 @@ jobs:
 
       # Step 2: Build Docker image
       - name: Build Docker image
+        working-directory: ${{ github.workspace }}  # Ensures correct working directory
         run: |
-          docker build -t thashenu/deployetest \
+          docker build -t thashenu/deployetest:build-$GITHUB_RUN_NUMBER \
           --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
           --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
           --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
           --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-          $GITHUB_WORKSPACE
+          -f ${{ github.workspace }}/Dockerfile \  # Ensuring correct Dockerfile location
+          ${{ github.workspace }}
+    
 
 
 
