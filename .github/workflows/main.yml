@@ -17,7 +17,7 @@ jobs:
       # Step 2: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t thashenu/deployetest:build-$GITHUB_RUN_NUMBER 
+          docker build -t thashenu/deployetest 
             --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
             --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
             --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
