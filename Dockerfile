@@ -1,6 +1,17 @@
 # Step 1: Use the official Node.js image as the base image
 FROM node:20-alpine
 
+# Define build arguments
+ARG NEXTAUTH_SECRET
+ARG MONGODB_URI
+ARG GOOGLE_CLIENT_ID
+ARG GOOGLE_CLIENT_SECRET
+
+# Set environment variables
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV MONGODB_URI=$MONGODB_URI
+ENV GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
 
 # Step 2: Set the working directory inside the container
 WORKDIR /app
