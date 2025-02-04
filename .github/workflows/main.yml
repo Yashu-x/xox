@@ -25,11 +25,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t thashenu/deployetest \
-            --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
-            --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
-            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET}} \
-            ..
+          --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
+          --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
+          --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+          --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+          $GITHUB_WORKSPACE
 
 
 
