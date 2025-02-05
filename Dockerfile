@@ -1,9 +1,6 @@
 # Step 1: Use the official Node.js image as the base image
 FROM node:20.15.0-alpine
 
-
-ENV GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-
 # Step 2: Set the working directory inside the container
 WORKDIR /app
 
