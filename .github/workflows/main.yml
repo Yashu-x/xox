@@ -24,12 +24,11 @@ jobs:
       # Step 2: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t deployetest:build-$GITHUB_RUN_NUMBER \
+          docker build -t deployetest:build-$GITHUB_RUN_NUMBER . \
           --build-arg NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
           --build-arg MONGODB_URI=${{ secrets.MONGODB_URI }} \
           --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-          --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-          . .
+          --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           
     
 
