@@ -1,17 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, FC } from "react";
 import Square from "./Square";
 import StatusCard from "../StatusCard";
-import { Button } from "../ui/button";
-import { useSession } from "next-auth/react";
-import { FC } from "react";
+import axios from "axios";
 
 interface NormalBordProps {
-  gameid: string;
-  players: {id: string, name: string,email:string}[];
-  moves:string[];
-  lastmoveId:string;
-  islastX:boolean;
+  roomid: string;
+  playersid: string;
 }
 
 const calculateWinner = (squares: string[]): string | null => {
@@ -38,47 +33,50 @@ const isBoardFull = (squares: string[]): boolean => {
   return squares.every(square => square !== "");
 };
 
-export const NormalBord: FC<NormalBordProps> = ({moves,lastmoveId,players,islastX}) => {
-  const [xIsNext, setXIsNext] = useState<boolean>(islastX);
-  const [squares, setSquares] = useState<string[]>(moves);
-  const { data: session } = useSession();
+export const NormalBord: FC<NormalBordProps> = ({roomid })=>{
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
+  const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
 
+  useEffect(() => {
+    // Define the API call function
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/game",
+          {
+            params: { id: roomid },
+          }
+        ); 
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    
+    // Call the API function
+    fetchData();
+    console.log("fetching data");
+  }, []); // Empty dependency array means this effect runs once on mount
+  
   const handleClick = (i: number): void => {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    if(lastmoveId != ""){
-      if(lastmoveId == session?.user?.id){
-        return;
-      }
-    }
-    if(players[0].id != session?.user?.id || players[1].id != session?.user?.id){
-      const nextSquares = squares.slice();
-      nextSquares[i] = xIsNext ? "X" : "O";
-      setSquares(nextSquares);
-      setXIsNext(!xIsNext);
-      //api call to back end to set the move and update lastmoveId and islastX
-    }else{
-      return;
-    }
+    const nextSquares = squares.slice();
+    nextSquares[i] = xIsNext ? "X" : "O";
+    setSquares(nextSquares);
+    setXIsNext(!xIsNext);
   };
 
   const winner = calculateWinner(squares);
   let status: string;
   if (winner) {
     status = "Winner: " + winner;
-    //api call to back end to set the winner
   } else if (isBoardFull(squares)) {
     status = "It's a draw!";
-    //api call to back end to set the draw
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
-
-  const handleReset = (): void => {
-    setSquares(Array(9).fill(""));
-    setXIsNext(true);
-  };
 
   return (
     <div className="flex justify-center items-center p-8 gap-10">
@@ -88,7 +86,6 @@ export const NormalBord: FC<NormalBordProps> = ({moves,lastmoveId,players,islast
           <Square key={idx} value={squares[idx]} onSquareClick={() => handleClick(idx)} />
         ))}
       </div>
-      <Button onClick={handleReset}>Reset</Button>
     </div>
   );
 };
