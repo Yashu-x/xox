@@ -49,6 +49,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Write Secret to File
+        run: printf "%s" "${{ secrets.ENVSECRET }}" > .env
+
       # Step 2: Add SSH key for EC2 access
       - name: Add SSH key
         run: |
@@ -56,6 +59,9 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
           chmod 600 ~/.ssh/ec2-key.pem
           ssh-keyscan ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+
+      - name: Test SSH Connection
+        run: ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "echo 'SSH connection successful'"
 
       # Step 3: Copy files to EC2 instance
       - name: Copy files to EC2
@@ -69,14 +75,6 @@ jobs:
             
             docker stop xox || true
             docker rm xox || true
-
-            # Pull the latest Docker image
             docker pull thashenu/xox:latest
-
-            # Run the Docker container
-            docker run -d \
-              --name xox \
-              --env-file /home/ubuntu/.env \
-              -p 80:3000 \
-              thashenu/xox:latest
+             docker run -d --name xox --env-file /home/ubuntu/.env -p 80:3000 thashenu/xox:latest
           "
