@@ -60,7 +60,7 @@ jobs:
       # Step 3: Copy files to EC2 instance
       - name: Copy files to EC2
         run: |
-          scp -i ~/.ssh/ec2-key.pem docker-compose.yml .env ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu
+          scp -i ~/.ssh/ec2-key.pem  .env ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu
 
       # Step 4: Deploy application on EC2
       - name: Deploy application
