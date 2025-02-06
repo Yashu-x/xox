@@ -66,6 +66,17 @@ jobs:
       - name: Deploy application
         run: |
           ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "
-            docker compose -f /home/ubuntu/docker-compose.yml --env-file /home/ubuntu/.env down || true
-            docker compose -f /home/ubuntu/docker-compose.yml --env-file /home/ubuntu/.env up -d
+            
+            docker stop xox || true
+            docker rm xox || true
+
+            # Pull the latest Docker image
+            docker pull thashenu/xox:latest
+
+            # Run the Docker container
+            docker run -d \
+              --name xox \
+              --env-file /home/ubuntu/.env \
+              -p 80:3000 \
+              thashenu/xox:latest
           "
