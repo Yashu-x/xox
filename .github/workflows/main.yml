@@ -76,6 +76,6 @@ jobs:
             sudo chmod 644 /home/ubuntu/.env
              docker stop xox || true
              docker rm xox || true
-            sudo docker pull thashenu/xox:latest
+            # sudo docker pull thashenu/xox:latest
              sudo docker run -d --name xox --env-file /home/ubuntu/.env -p 80:3000 thashenu/xox:latest
           "
