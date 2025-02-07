@@ -17,7 +17,8 @@ const ChallageBubble: FC<ChallagesProps> = ({ playerName, challageid }) => {
       });
       console.log('Accept Response:', response.data);
     } catch (error) {
-      console.error('Error accepting challenge:', error);
+      // console.error('Error accepting challenge:', error);
+      console.log('Error accepting challenge:', error);
     }
   };
 
