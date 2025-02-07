@@ -28,13 +28,23 @@ export async function POST(req: Request) {
 
     const { player1id, player2id } = existingChallenge;
 
+    // Randomly assign symbols to players
+    const randomSymbol = Math.random() < 0.5 ? "X" : "O"; // Randomly choose "X" or "O"
+    const player1Symbol = randomSymbol;
+    const player2Symbol = randomSymbol === "X" ? "O" : "X";
+
     // Create a room with both players
     const roomId = `room-${Date.now()}`; // Generate a unique room ID
     const newGame = new Game({
       roomId,
-      players: [player1id, player2id],
-      moves: [],
-      winner: null,
+      players: [
+        { id: player1id, symbol: player1Symbol }, // Assign random symbol to Player 1
+        { id: player2id, symbol: player2Symbol }, // Assign the other symbol to Player 2
+      ],
+      moves: Array(9).fill(""), // Initialize moves with an empty array of 9 elements
+      currentPlayer: player1id, // Set the first player as the current player
+      winner: null, // No winner initially
+      status: "waiting", // Set initial status to "waiting"
     });
 
     // Save the game to the database
@@ -47,7 +57,10 @@ export async function POST(req: Request) {
       {
         message: "Challenge successfully accepted",
         roomId,
-        players: [player1id, player2id],
+        players: [
+          { id: player1id, symbol: player1Symbol },
+          { id: player2id, symbol: player2Symbol },
+        ],
       },
       { status: 200 }
     );
@@ -65,7 +78,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.error("Unexpected server error:", error);
+    // console.error("Unexpected server error:", error);
     return NextResponse.json(
       { error: "Internal server error. Please try again later." },
       { status: 500 }
