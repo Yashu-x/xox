@@ -1,27 +1,22 @@
-version: '3.8'
 
 services:
-  app:
-    build:
-      context: .  # Build the app from the current directory
-    ports:
-      - "3000:3000"  # Map port 3000 on the host to port 3000 in the container
-    environment:
-      - MONGO_URI='mongodb+srv://yasi:yasitha2001@cluster0.v5jrn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'  # MongoDB Atlas connection string
-      - NODE_ENV=development
-    depends_on:
-      mongo:
-        condition: service_healthy  # Ensure MongoDB is healthy before starting the app
 
   mongo:
-    image: mongo  # Use the official MongoDB image
-    ports:
-      - "27017:27017"  # Map port 27017 on the host to port 27017 in the container
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root  # Root username for MongoDB
-      - MONGO_INITDB_ROOT_PASSWORD=password  # Root password for MongoDB
+    image: mongo:latest
+    container_name: mongo_container_xox
     volumes:
-      - mongo-data:/data/db  # Persist MongoDB data in a volume
+      - /mongo_data/db:/data/db
+    ports:
+      - "27017:27017"
+  app:
+    build:
+      context: .  
+    ports:
+      - "3000:3000"  
+    env_file:
+      - ./.env
+    depends_on:
+      - mongo  
 
 volumes:
-  mongo-data:  # Define a named volume for MongoDB data
+  mongo-data:  
