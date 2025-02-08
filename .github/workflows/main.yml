@@ -1,80 +1,80 @@
-name: Docker Build, Push, and Deploy to AWS EC2
+# name: Docker Build, Push, and Deploy to AWS EC2
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+# jobs:
+#   build-and-push:
+#     runs-on: ubuntu-latest
 
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-
-         # Step 3: Log in to Docker Hub
-      - name: Login to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u thashenu --password-stdin
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Write Secret to File
-        run: echo "${{ secrets.ENVSECRET }}" > .env 
+#     steps:
+#       # Step 1: Checkout the code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
 
-      # Step 2: Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t thashenu/xox:latest . 
+#          # Step 3: Log in to Docker Hub
+#       - name: Login to Docker Hub
+#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u thashenu --password-stdin
+#         env:
+#           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Push Docker image
-      - name: Push Docker image
-        run: |
-          docker push thashenu/xox:latest
+#       - name: Write Secret to File
+#         run: echo "${{ secrets.ENVSECRET }}" > .env 
 
-      # Step 5: Logout from Docker Hub (always run)
-      - name: Logout from Docker Hub
+
+#       # Step 2: Build Docker image
+#       - name: Build Docker image
+#         run: |
+#           docker build -t thashenu/xox:latest . 
+
+#       # Step 4: Push Docker image
+#       - name: Push Docker image
+#         run: |
+#           docker push thashenu/xox:latest
+
+#       # Step 5: Logout from Docker Hub (always run)
+#       - name: Logout from Docker Hub
       
-        run: docker logout
+#         run: docker logout
 
-  deploy-to-ec2:
-    runs-on: ubuntu-latest
-    needs: build-and-push  # Ensure this job runs after build-and-push
+#   deploy-to-ec2:
+#     runs-on: ubuntu-latest
+#     needs: build-and-push  # Ensure this job runs after build-and-push
 
-    steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+#     steps:
+#       # Step 1: Checkout the code
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Write Secret to File
-        run: printf "%s" "${{ secrets.ENVSECRET }}" > .env
+#       - name: Write Secret to File
+#         run: printf "%s" "${{ secrets.ENVSECRET }}" > .env
 
-      # Step 2: Add SSH key for EC2 access
-      - name: Add SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
-          chmod 600 ~/.ssh/ec2-key.pem
-          ssh-keyscan ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+#       # Step 2: Add SSH key for EC2 access
+#       - name: Add SSH key
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
+#           chmod 600 ~/.ssh/ec2-key.pem
+#           ssh-keyscan ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
 
-      - name: Test SSH Connection
-        run: ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "echo 'SSH connection successful'"
+#       - name: Test SSH Connection
+#         run: ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "echo 'SSH connection successful'"
 
-      # Step 3: Copy files to EC2 instance
-      - name: Copy files to EC2
-        run: |
-          scp -i ~/.ssh/ec2-key.pem  .env ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu
+#       # Step 3: Copy files to EC2 instance
+#       - name: Copy files to EC2
+#         run: |
+#           scp -i ~/.ssh/ec2-key.pem  .env ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu
 
-      # Step 4: Deploy application on EC2
-      - name: Deploy application
-        run: |
-          ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "
-             sudo fuser -k 80/tcp || true
-             sudo docker stop xox || true
-             sudo docker rm xox || true
-             sudo docker pull thashenu/xox:latest
-             sudo docker run -d --name xox  -p 80:3000 thashenu/xox:latest
-          "
+#       # Step 4: Deploy application on EC2
+#       - name: Deploy application
+#         run: |
+#           ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "
+#              sudo fuser -k 80/tcp || true
+#              sudo docker stop xox || true
+#              sudo docker rm xox || true
+#              sudo docker pull thashenu/xox:latest
+#              sudo docker run -d --name xox  -p 80:3000 thashenu/xox:latest
+#           "
