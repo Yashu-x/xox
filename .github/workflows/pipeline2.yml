@@ -54,7 +54,7 @@ jobs:
       - name: Copy Files to EC2
         run: |
           scp -i ~/.ssh/ec2-key.pem \
-            .env docker-compose.yml \
+            .env docker-compose.yaml \
             ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/
 
       - name: Deploy with Docker Compose
