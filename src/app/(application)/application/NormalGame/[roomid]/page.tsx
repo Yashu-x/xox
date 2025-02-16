@@ -4,17 +4,18 @@ import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import React from "react";
 
-const Page = async () => {
+const Page = async ({ params }: { params: { roomid: string } }) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
   const userId = session.user?.id;
+  const roomid = params.roomid;
 
-    return (
-      <div>
-        <NormalBord playersid={userId} roomid="room-1738840471045"/>
-      </div>
-    );
+  return (
+    <div>
+      <NormalBord playersid={userId} roomid={roomid} />
+    </div>
+  );
 };
 
 export default Page;
