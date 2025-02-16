@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   try {
     await connectMongoDB();
 
-    let game: IGame | null = await Game.findOne({ roomId: id });
+    const game: IGame | null = await Game.findOne({ roomId: id });
 
     if (game) {
       return NextResponse.json({ game }, { status: 200 });

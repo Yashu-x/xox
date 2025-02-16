@@ -1,39 +1,47 @@
+// components/SignUp.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { signIn } from "next-auth/react";
-import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
-const Login = () => {
+const SignUp = () => {
   const { toast } = useToast();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const router = useRouter();
+  const [name, setName] = useState<string>("");
 
-  async function loginWithCredentials() {
+  async function handleSignUp() {
     setIsLoading(true);
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email,
-        password,
+      const response = await fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name }),
       });
 
-      if (result?.error) {
-        throw new Error(result.error);
-      }
-      
-      if(result?.url){
-        router.push("/application");
+      if (!response.ok) {
+        throw new Error("Sign-up failed. Please try again.");
       }
 
+      const data = await response.json();
+      toast({
+        title: "Success!",
+        description: "Account created successfully. Please log in.",
+      });
+      console.log(data);
+
+      // Redirect to login page after successful sign-up
+      router.push("/login");
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Something went wrong with your login.",
+        title: "Something went wrong.",
         description: `${error}`,
       });
     } finally {
@@ -48,10 +56,17 @@ const Login = () => {
           <div className="flex flex-col items-center gap-8">
             logo
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-              Sign in to your account
+              Create a new account
             </h2>
           </div>
           <div className="w-full space-y-4">
+            <input
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
             <input
               type="email"
               placeholder="Email"
@@ -69,15 +84,15 @@ const Login = () => {
             <Button
               disabled={isLoading}
               className="max-w-sm mx-auto w-full"
-              onClick={loginWithCredentials}
+              onClick={handleSignUp}
             >
-              {isLoading ? "Loading..." : "Sign In"}
+              {isLoading ? "Creating account..." : "Sign Up"}
             </Button>
           </div>
           <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
-            <a href="/SignUp" className="text-blue-600 hover:underline">
-              Sign up
+            Already have an account?{" "}
+            <a href="/login" className="text-blue-600 hover:underline">
+              Log in
             </a>
           </p>
         </div>
@@ -86,4 +101,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;
