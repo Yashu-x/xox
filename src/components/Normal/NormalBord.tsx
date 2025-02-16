@@ -6,7 +6,7 @@ import axios from "axios";
 
 interface NormalBordProps {
   roomid: string;
-  playersid: string;
+  // playersid: string;
 }
 
 const calculateWinner = (squares: string[]): string | null => {
