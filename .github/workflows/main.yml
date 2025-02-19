@@ -72,9 +72,10 @@ jobs:
       - name: Deploy application
         run: |
           ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "
-             sudo systemctl stop existing-service || true
+             sudo fuser -k 80/tcp || true
              sudo docker stop xox || true
              sudo docker rm xox || true
              sudo docker pull thashenu/xox:latest
              sudo docker run -d --name xox  -p 80:3000 thashenu/xox:latest
+              sudo docker system prune -f
           "
