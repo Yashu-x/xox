@@ -47,7 +47,8 @@ export const NormalBord: FC<NormalBordProps> = ({roomid })=>{
             params: { id: roomid },
           }
         ); 
-        console.log(response);
+        console.log(response.data.game);
+        setSquares(response.data.game.moves);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -1,0 +1,67 @@
+# name: Docker Build, Push, and Deploy to AWS EC2 with Compose
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build-and-push:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Login to Docker Hub
+#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u thashenu --password-stdin
+#         env:
+#           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+#       - name: Write Secret to File
+#         run: echo "${{ secrets.ENVSECRET }}" > .env
+
+#       - name: Build Docker image
+#         run: docker build -t thashenu/xox:latest .
+
+#       - name: Push Docker image
+#         run: docker push thashenu/xox:latest
+
+#       - name: Logout from Docker Hub
+#         run: docker logout
+
+#   deploy-to-ec2:
+#     runs-on: ubuntu-latest
+#     needs: build-and-push
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3  # Required to access docker-compose.yml
+
+#       - name: Write Secret to File
+#         run: printf "%s" "${{ secrets.ENVSECRET }}" > .env
+
+#       - name: Add SSH key
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
+#           chmod 600 ~/.ssh/ec2-key.pem
+#           ssh-keyscan ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+
+#       - name: Test SSH Connection
+#         run: ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "echo 'SSH OK'"
+
+#       - name: Copy Files to EC2
+#         run: |
+#           scp -i ~/.ssh/ec2-key.pem \
+#             .env docker-compose.yaml \
+#             ubuntu@${{ secrets.EC2_IP }}:/home/ubuntu/
+
+#       - name: Deploy with Docker Compose
+#         run: |
+#           ssh -i ~/.ssh/ec2-key.pem ubuntu@${{ secrets.EC2_IP }} "
+#             cd /home/ubuntu
+#             sudo docker-compose pull
+#             sudo docker-compose down
+#             sudo docker-compose up -d
+#           "
