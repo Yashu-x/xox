@@ -3,7 +3,7 @@ name: Docker Build, Push, and Deploy to AWS EC2
 on:
   push:
     branches:
-      - Devolop
+      - main
 
 jobs:
   build-and-push:
